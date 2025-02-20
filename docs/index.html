@@ -74,6 +74,7 @@
     <div class="left-pane" id="song-list">
         <h2 class="text-center mb-4">ಕರ್ನಾಟಕ ಸಂಗೀತ ಸಾಹಿತ್ಯ ಮಾಲೆ</h2>
 	    <input type="text" id="searchBox" class="form-control mb-2" placeholder="Search songs..." onkeyup="filterSongs()">
+	    <div id="activeFilter" class="alert alert-info text-center" style="display: none;"></div>
         <ol class="list-group" id="song-items">
 <li class="list-group-item song-item" data-type="alphabetical" data-composer="tyAgarAja" data-language="telugu">
 <a href="A_daya_shrI_raghuvara.html" target="lyrics-frame">A daya sri raghuvara (ಆ ದಯ ಶ್ರೀ ರಘುವರ )</a>
@@ -7164,40 +7165,55 @@
 </div>
 
 <script>
-function showList(filter) {
-    $('.song-item').hide();
-    if (filter === 'alphabetical') {
-        $('.song-item[data-type="alphabetical"]').show();
+function updateFilterLabel(text) {
+    let filterDiv = document.getElementById("activeFilter");
+    if (text) {
+        filterDiv.innerText = "Filter: " + text;
     } else {
-        $('.song-item[data-language="' + filter + '"]').show();
+        filterDiv.innerText = "All Songs"; // Show "All Songs" when no filter
+    }
+    filterDiv.style.display = "block";
+}
+
+function showList(filter) {
+    let songs = document.querySelectorAll("#song-items .song-item");
+    songs.forEach(song => song.style.display = "none");
+
+    if (filter === 'alphabetical') {
+        songs.forEach(song => song.style.display = "");
+        updateFilterLabel(""); // No filter applied -> "All Songs"
+    } else {
+        let filteredSongs = document.querySelectorAll(`#song-items .song-item[data-language="${filter}"]`);
+        filteredSongs.forEach(song => song.style.display = "");
+        updateFilterLabel("Language: " + filter.charAt(0).toUpperCase() + filter.slice(1));
     }
 }
 
 function showComposer(composer) {
-    $('.song-item').hide();
-    $('.song-item[data-composer="' + composer + '"]').show();
+    let songs = document.querySelectorAll("#song-items .song-item");
+    songs.forEach(song => song.style.display = "none");
+
+    let filteredSongs = document.querySelectorAll(`#song-items .song-item[data-composer="${composer}"]`);
+    filteredSongs.forEach(song => song.style.display = "");
+    updateFilterLabel("Composer: " + composer.replace("_", " ").charAt(0).toUpperCase() + composer.slice(1));
 }
 
-$(document).ready(function() { showList('alphabetical'); });
-</script>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-<script>
 function filterSongs() {
     let input = document.getElementById("searchBox").value.toLowerCase();
     let songs = document.querySelectorAll("#song-items .song-item");
 
+    let visibleSongs = 0;
     songs.forEach(song => {
         let text = song.innerText.toLowerCase();
         if (text.includes(input)) {
             song.style.display = "";
+            visibleSongs++;
         } else {
             song.style.display = "none";
         }
     });
+
+    updateFilterLabel(input ? "Search: " + input : "");
 }
 </script>
 
