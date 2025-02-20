@@ -73,6 +73,7 @@
 <div class="container">
     <div class="left-pane" id="song-list">
         <h2 class="text-center mb-4">ಕರ್ನಾಟಕ ಸಂಗೀತ ಸಾಹಿತ್ಯ ಮಾಲೆ</h2>
+	    <input type="text" id="searchBox" class="form-control mb-2" placeholder="Search songs..." onkeyup="filterSongs()">
         <ol class="list-group" id="song-items">
 <li class="list-group-item song-item" data-type="alphabetical" data-composer="tyAgarAja" data-language="telugu">
 <a href="A_daya_shrI_raghuvara.html" target="lyrics-frame">A daya sri raghuvara (ಆ ದಯ ಶ್ರೀ ರಘುವರ )</a>
@@ -7183,6 +7184,22 @@ $(document).ready(function() { showList('alphabetical'); });
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+function filterSongs() {
+    let input = document.getElementById("searchBox").value.toLowerCase();
+    let songs = document.querySelectorAll("#song-items .song-item");
+
+    songs.forEach(song => {
+        let text = song.innerText.toLowerCase();
+        if (text.includes(input)) {
+            song.style.display = "";
+        } else {
+            song.style.display = "none";
+        }
+    });
+}
+</script>
 
 </body>
 </html>
